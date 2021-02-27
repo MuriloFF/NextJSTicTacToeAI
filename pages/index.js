@@ -11,7 +11,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Que simples de colocar no ar!!
         </h1>
 
         <p className={styles.description}>
@@ -60,6 +60,6 @@ export default function Home() {
           <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
         </a>
       </footer>
-    </div>
+    </div >
   )
 }
