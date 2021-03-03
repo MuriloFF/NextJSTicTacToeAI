@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Swal from 'sweetalert2'
 
 export default function useTicTacToeController() {
     const [firstime, setFirstime] = useState(true)
     const [aI, setAI] = useState(2)
 
-    function selectedItem(e, game, setUpdate, winnerButtons, setwinnerButtons, playerWins, setPlayerWins, aIWins, setAIWins) {
+    function selectedItem(e, game, setgame, setwinnerButtons, setPlayerWins, setAIWins) {
         const selectedItem = e.target.id;
         game[selectedItem] = aI === 2 ? 'X' : 'O'
 
@@ -15,22 +15,24 @@ export default function useTicTacToeController() {
 
         if (isGameOver(game)) {
             if (isATieGame(game))
-                sendMessage(true, null, game, setUpdate, setwinnerButtons);
+                sendMessage(null, game, setgame, setwinnerButtons);
             else {
                 let winner = getWinner(game);
                 if (winner === aI)
-                    setAIWins(aIWins + 1)
+                    setAIWins((wins) => wins + 1)
                 else
-                    setPlayerWins(playerWins + 1)
+                    setPlayerWins((wins) => wins + 1)
                 // Show the buttons that won
-                colorWinners(game, winnerButtons)
-                sendMessage(false, winner, game, setUpdate, setwinnerButtons)
+                colorWinners(game, setwinnerButtons)
+                sendMessage(winner, game, setgame, setwinnerButtons)
             }
         }
-        setUpdate(Math.random())
+
+        updateGame(game, setgame)
     }
 
-    function colorWinners(game, winnerButtons) {
+    function colorWinners(game, setwinnerButtons) {
+        let winnerButtons = [];
         for (let i = 0; i < 3; i++) {
             if (game[i * 3] === game[(i * 3) + 1] && game[(i * 3) + 1] === game[(i * 3) + 2]
                 && game[i * 3]) {
@@ -58,10 +60,10 @@ export default function useTicTacToeController() {
             winnerButtons.push(4)
             winnerButtons.push(6)
         }
+        setwinnerButtons(winnerButtons)
     }
 
     function aIsTurn(game, aIValue = aI) {
-        console.log(aIValue)
         let depth = 9;
         let bestValue = Number.MIN_SAFE_INTEGER;
         let bestPosition = -1;
@@ -180,9 +182,9 @@ export default function useTicTacToeController() {
         setwinnerButtons([])
     }
 
-    function sendMessage(tie, winner, game, setUpdate, setwinnerButtons) {
+    function sendMessage(winner, game, setgame, setwinnerButtons) {
         Swal.fire({
-            title: tie ? 'Game over, tied' : (aI === winner ? 'I won!!' : 'Congratulations, you won!'),
+            title: winner === null ? 'Game over, tied' : (aI === winner ? 'I won!!' : 'Congratulations, you won!'),
             text: "Do you want to play again?",
             icon: aI === winner ? 'question' : 'success',
             showCancelButton: true,
@@ -206,10 +208,18 @@ export default function useTicTacToeController() {
                 setAI(aiValue)
                 if (aiValue === 1) {
                     aIsTurn(game, aiValue)
-                    console.log(game)
                 }
+                updateGame(game, setgame)
             }
-            setUpdate(Math.random())
+        })
+    }
+
+    // Update game using setgame
+    function updateGame(games, setgame) {
+        setgame(() => {
+            return games.map(game => {
+                return game;
+            })
         })
     }
 

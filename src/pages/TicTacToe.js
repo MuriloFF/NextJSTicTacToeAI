@@ -2,7 +2,7 @@
 import Grid from '@material-ui/core/Grid';
 import TicTacToeButton from '../components/ticTacToeButton'
 import useTicTacToeController from '../controllers/ticTacToeController'
-import { useState, useLayoutEffect, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@material-ui/core';
 import styles from '../styles/Home.module.css'
 
@@ -13,8 +13,7 @@ export default function TicTacToe() {
     const [playerWins, setPlayerWins] = useState(0)
     const [aIWins, setAIWins] = useState(0)
     const [buttons, setButtons] = useState([])
-    const [update, setUpdate] = useState(0)
-    const onClick = (e) => { selectedItem(e, game, setUpdate, winnerButtons, setwinnerButtons, playerWins, setPlayerWins, aIWins, setAIWins) };
+    const onClick = (e) => { selectedItem(e, game, setgame, setwinnerButtons, setPlayerWins, setAIWins) };
 
     // Update every time the game changes
     // useLayoutEffect(() => {
@@ -37,7 +36,7 @@ export default function TicTacToe() {
             grids.push(<Grid key={`grid_cont_${x}`} container spacing={6} >{arrayButtons}</Grid>);
         }
         setButtons(grids);
-    }, [update])
+    }, [...game])
     // setButtons(grids)
 
     // let value = []
@@ -53,10 +52,8 @@ export default function TicTacToe() {
         <div style={{ marginTop: '50px' }}>
             {buttons}
         </div >
-        <h2>
-            <div style={{ marginTop: '30px' }}> Score: </div>
-            <div>User: {playerWins} - AI: {aIWins}</div>
-        </h2>
+        <h2 className={styles.subtitle} style={{ marginTop: '30px' }}> Score: </h2>
+        <h2 className={styles.subtitle}>User: {playerWins} - AI: {aIWins}</h2>
         <Button variant="contained" color="primary" className={styles.resetButton} onClick={() => { reset(game, setwinnerButtons) }}>Reset</Button>
     </div >)
 }
