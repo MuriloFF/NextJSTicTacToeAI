@@ -1,14 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
 export default function useTicTacToeController() {
     const [firstime, setFirstime] = useState(true)
-    const [update, setUpdate] = useState(false)
     const [aI, setAI] = useState(2)
 
-    function selectedItem(e, game, winnerButtons, setwinnerButtons, playerWins, setPlayerWins, aIWins, setAIWins) {
+    function selectedItem(e, game, setUpdate, winnerButtons, setwinnerButtons, playerWins, setPlayerWins, aIWins, setAIWins) {
         const selectedItem = e.target.id;
-        game[selectedItem] = aI === 1 ? 'O' : 'X'
+        game[selectedItem] = aI === 2 ? 'X' : 'O'
 
         // AI's turn, if the game is not over
         if (!isGameOver(game))
@@ -16,7 +15,7 @@ export default function useTicTacToeController() {
 
         if (isGameOver(game)) {
             if (isATieGame(game))
-                sendMessage(true, null, game, setwinnerButtons);
+                sendMessage(true, null, game, setUpdate, setwinnerButtons);
             else {
                 let winner = getWinner(game);
                 if (winner === aI)
@@ -25,10 +24,10 @@ export default function useTicTacToeController() {
                     setPlayerWins(playerWins + 1)
                 // Show the buttons that won
                 colorWinners(game, winnerButtons)
-                sendMessage(false, winner, game, setwinnerButtons)
+                sendMessage(false, winner, game, setUpdate, setwinnerButtons)
             }
         }
-        setUpdate(!update)
+        setUpdate(Math.random())
     }
 
     function colorWinners(game, winnerButtons) {
@@ -61,7 +60,8 @@ export default function useTicTacToeController() {
         }
     }
 
-    function aIsTurn(game) {
+    function aIsTurn(game, aIValue = aI) {
+        console.log(aIValue)
         let depth = 9;
         let bestValue = Number.MIN_SAFE_INTEGER;
         let bestPosition = -1;
@@ -70,8 +70,8 @@ export default function useTicTacToeController() {
             if (game[i] !== null)
                 continue;
 
-            game[i] = aI === 1 ? 'X' : 'O'
-            let value = minMaxAI(game, depth, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, false);
+            game[i] = aIValue === 1 ? 'X' : 'O'
+            let value = minMaxAI(game, aIValue, depth, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, false);
             // Remove the try
             game[i] = null;
             if (value > bestValue) {
@@ -79,7 +79,7 @@ export default function useTicTacToeController() {
                 bestPosition = i;
             }
         }
-        game[bestPosition] = aI === 1 ? 'X' : 'O'
+        game[bestPosition] = aIValue === 1 ? 'X' : 'O'
     }
 
     function isGameOver(game) {
@@ -123,14 +123,14 @@ export default function useTicTacToeController() {
     // Score = +1 (win) + depth (minimum plays to win); -1 (lose); 0 (Tie);
     // Note: Maximize = AI (Player 2)
     // Alpha = BestValue until now. Beta = Lower value
-    function minMaxAI(game, depth, alpha, beta, maximize) {
+    function minMaxAI(game, aIValue = aI, depth, alpha, beta, maximize) {
         if (depth === 0)
             return 0;
 
         if (isGameOver(game)) {
             if (isATieGame(game))
                 return 0;
-            else if (getWinner(game) === aI)
+            else if (getWinner(game) === aIValue)
                 return 1 + depth;
             else
                 return -1 - depth;
@@ -146,12 +146,12 @@ export default function useTicTacToeController() {
 
             // Player1 always X
             // Player2 always O
-            let valueMax = aI === 1 ? 'X' : 'O';
-            let valueMin = aI === 1 ? 'O' : 'X';
+            let valueMax = aIValue === 1 ? 'X' : 'O';
+            let valueMin = aIValue === 1 ? 'O' : 'X';
 
             game[i] = maximize ? valueMax : valueMin;
             // Change to opposite turn (MinMax)
-            let value = minMaxAI(game, depth - 1, alpha, beta, maximize ? false : true);
+            let value = minMaxAI(game, aIValue, depth - 1, alpha, beta, maximize ? false : true);
 
             // Remove the recent play
             game[i] = null;
@@ -180,7 +180,7 @@ export default function useTicTacToeController() {
         setwinnerButtons([])
     }
 
-    function sendMessage(tie, winner, game, setwinnerButtons) {
+    function sendMessage(tie, winner, game, setUpdate, setwinnerButtons) {
         Swal.fire({
             title: tie ? 'Game over, tied' : (aI === winner ? 'I won!!' : 'Congratulations, you won!'),
             text: "Do you want to play again?",
@@ -192,23 +192,24 @@ export default function useTicTacToeController() {
             cancelButtonText: 'Not now',
         }).then((result) => {
             if (result.isConfirmed) {
-                // if (firstime) {
-                //     Swal.fire({
-                //         icon: 'info',
-                //         title: 'I will go first now',
-                //         showConfirmButton: false,
-                //         timer: 1500
-                //     })
-                //     setFirstime(false)
-                // }
+                if (firstime) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'I will go first now',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setFirstime(false)
+                }
                 reset(game, setwinnerButtons)
-                // let aiValue = aI === 1 ? 2 : 1;
-                // setAI(() => { aiValue })
-                // if (aiValue === 1) {
-                //     aIsTurn(game)
-                //     setUpdate(!update)
-                // }
+                let aiValue = aI === 1 ? 2 : 1;
+                setAI(aiValue)
+                if (aiValue === 1) {
+                    aIsTurn(game, aiValue)
+                    console.log(game)
+                }
             }
+            setUpdate(Math.random())
         })
     }
 
