@@ -5,7 +5,9 @@ import useTicTacToeController from '../controllers/ticTacToeController'
 import { useState, useEffect } from 'react'
 import { Button } from '@material-ui/core';
 import classNames from 'classnames'
+import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { Html } from 'next/document';
 
 export default function TicTacToe() {
     const { selectedItem, reset } = useTicTacToeController();
@@ -34,7 +36,7 @@ export default function TicTacToe() {
                 let winnerButtonStyle = winnerButtons.indexOf(id) === -1 ? '' : styles.winnerButton
                 arrayButtons.push(
                     <Grid item xs={4} key={`grid_${id}`} id={`grid_${id}`} className={buttonStyle} >
-                        <TicTacToeButton key={`btn_${id}`} id={id} className={classNames(styles.ticTacToeButton, winnerButtonStyle)} onClick={onClick} disabled={game[id] !== null}>{game[id] === null || game[id] === "" ? "" : (game[id] === 'X' ? imgX() : imgCircle())}</TicTacToeButton>
+                        <TicTacToeButton key={`btn_${id}`} id={id} aria-label='click to play' className={classNames(styles.ticTacToeButton, winnerButtonStyle)} onClick={onClick} disabled={game[id] !== null}>{game[id] === null || game[id] === "" ? "" : (game[id] === 'X' ? imgX() : imgCircle())}</TicTacToeButton>
                     </Grid >
                 );
             }
@@ -47,7 +49,12 @@ export default function TicTacToe() {
     return (
         <div className={styles.container}>
             <h4 className={styles.title}>
-                <img src='/favicon.ico' alt='Logo' /> Play agains the AI
+                <div
+                    style={{ marginTop: '-35px', marginRight: '20px' }} > <Image src='/images/tictactoe-128px.png'
+                        alt="Logo"
+                        width={128}
+                        height={128}
+                    /></div> Play agains the AI
             </h4>
             <div style={{ marginTop: '50px' }}>
                 <Grid style={{ borderRadius: '6px', backgroundColor: '#AAA' }} >{buttons}</Grid>

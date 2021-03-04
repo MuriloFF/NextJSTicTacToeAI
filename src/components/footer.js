@@ -8,7 +8,7 @@ export default function Footer() {
             rel="noopener noreferrer"
         >
             Murilo's AI, Powered by
-            <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
+            <img src="/vercel.svg" alt="Vercel Logo" className={styles.vercellogo} />
         </a>
     </footer>
 }

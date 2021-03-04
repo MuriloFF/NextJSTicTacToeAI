@@ -189,7 +189,7 @@ export default function useTicTacToeController() {
 
     function sendMessage(winner, game, setgame, setwinnerButtons) {
         Swal.fire({
-            title: winner === null ? 'Game over, tied' : (aI === winner ? 'I won!!' : 'Congratulations, you won!'),
+            title: winner === null ? 'Game over, we tied!' : (aI === winner ? 'I won!!' : 'Congratulations, you won!'),
             text: "Do you want to play again?",
             icon: aI === winner ? 'question' : 'success',
             showCancelButton: true,
