@@ -2,7 +2,8 @@ import { useState } from 'react'
 import Swal from 'sweetalert2'
 
 export default function useTicTacToeController() {
-    const [firstime, setFirstime] = useState(true)
+    // Used to show the first time message
+    const [firsTime, setFirsTime] = useState(true)
     const [aI, setAI] = useState(2)
 
     function selectedItem(e, game, setgame, setwinnerButtons, setPlayerWins, setAIWins) {
@@ -13,19 +14,21 @@ export default function useTicTacToeController() {
         if (!isGameOver(game))
             aIsTurn(game)
 
+        // Check again after the AI
         if (isGameOver(game)) {
-            if (isATieGame(game))
-                sendMessage(null, game, setgame, setwinnerButtons);
-            else {
-                let winner = getWinner(game);
+            let winner = getWinner(game);
+
+            // There's a winner
+            if (winner !== null) {
                 if (winner === aI)
                     setAIWins((wins) => wins + 1)
                 else
                     setPlayerWins((wins) => wins + 1)
+
                 // Show the buttons that won
                 colorWinners(game, setwinnerButtons)
-                sendMessage(winner, game, setgame, setwinnerButtons)
             }
+            sendMessage(winner, game, setgame, setwinnerButtons)
         }
 
         updateGame(game, setgame)
@@ -64,6 +67,7 @@ export default function useTicTacToeController() {
     }
 
     function aIsTurn(game, aIValue = aI) {
+        // Calculating all the chances
         let depth = 9;
         let bestValue = Number.MIN_SAFE_INTEGER;
         let bestPosition = -1;
@@ -85,7 +89,7 @@ export default function useTicTacToeController() {
     }
 
     function isGameOver(game) {
-        return isATieGame(game) || getWinner(game) != null;
+        return isATieGame(game) || getWinner(game) !== null;
     }
 
     function isATieGame(game) {
@@ -130,9 +134,10 @@ export default function useTicTacToeController() {
             return 0;
 
         if (isGameOver(game)) {
-            if (isATieGame(game))
+            let winner = getWinner(game)
+            if (winner === null)
                 return 0;
-            else if (getWinner(game) === aIValue)
+            else if (winner === aIValue)
                 return 1 + depth;
             else
                 return -1 - depth;
@@ -194,14 +199,14 @@ export default function useTicTacToeController() {
             cancelButtonText: 'Not now',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (firstime) {
+                if (firsTime) {
                     Swal.fire({
                         icon: 'info',
                         title: 'I will go first now',
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    setFirstime(false)
+                    setFirsTime(false)
                 }
                 reset(game, setwinnerButtons)
                 let aiValue = aI === 1 ? 2 : 1;
@@ -209,6 +214,11 @@ export default function useTicTacToeController() {
                 if (aiValue === 1) {
                     aIsTurn(game, aiValue)
                 }
+                updateGame(game, setgame)
+                // Don't let the user play if the game is over
+            } else {
+                for (let i = 0; i < 9; i++)
+                    game[i] = game[i] ? game[i] : ""
                 updateGame(game, setgame)
             }
         })

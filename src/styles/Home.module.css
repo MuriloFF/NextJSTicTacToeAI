@@ -47,7 +47,7 @@
 }
 
 .title {
-  margin: 0;
+  margin: 20px;
   line-height: 1.15;
   font-size: 4rem;
 }
@@ -135,13 +135,32 @@
 .ticTacToeButton {
   width: 25vw; 
   height: 20vh;
-  font-size: 5em !important;
+  background-color: #EEE !important;
+}
+
+.winnerButton {
+  background-color: green !important;
+}
+
+.ticTacToeImg {
+  width: 5em; 
+  height: 5em;
 }
 
 .resetButton {
   margin-top: 50px !important;
   margin-bottom: 50px !important;
-  width: 25vw; 
-  height: 20vh; 
-  font-size: 5vw !important;
+  width: 20vw; 
+  min-width: 150px !important;
+  height: 15vh; 
+  min-height: 100px;
+  font-size: 2.3em !important;
+}
+
+.buttonsTop {
+  padding-top: 0px !important;
+}
+
+.buttonsBottom {
+  padding-bottom: 0px !important;
 }
